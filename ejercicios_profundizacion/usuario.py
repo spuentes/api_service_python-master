@@ -79,7 +79,7 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     title = db.Column(db.String)
-    completed = db.column(db.Boolean)
+    completed = db.Column(db.Boolean)
     
     def __repr__(self):
         return f"Usuario: {self.userId}, titulo {self.title}, completado {self.completed} "
@@ -169,12 +169,12 @@ def title_completed_count(userId):
 
     # Leer tabla
     json_result_list = []
-    stmt = 'SELECT * FROM usuario WHERE userId = "' + userId + '"'
+    stmt = 'SELECT * FROM usuario WHERE userId = "' + userId + '" AND completed = 1'
     for row in c.execute(stmt):
         json_result = {}
         json_result['userId'] = row[1]
         json_result['title'] = row[2]
-        #json_result['completed'] = row[3]
+        json_result['completed'] = row[3]
         json_result_list.append(json_result)
         print(row)
 
@@ -200,7 +200,7 @@ def reporte():
         json_result = {}
         json_result['userId'] = row[1]
         json_result['title'] = row[2]
-        #json_result['completed'] = row[3]
+        json_result['completed'] = row[3]
         json_result_list.append(json_result)
         print(row)
 
@@ -208,7 +208,7 @@ def reporte():
 
 
 # Obtiene - 2 list - Grafico
-def comparativa(name):
+def comparativa():
     # Recupera database
     dbase, dbase1 = recupera_database()
 
@@ -223,10 +223,10 @@ def comparativa(name):
     json_result_list = []
     userid = []
     completed = []
-    stmt = 'SELECT * FROM usuario Where name == "' + name + '"'
+    stmt = 'SELECT distinct(userId), count(*) FROM usuario WHERE completed = 1 GROUP BY userId'
     for row in c.execute(stmt):
-        userid.append(row[1])
-        #completed.append(row[3])
+        userid.append(row[0])
+        completed.append(row[1])
         print(row)
 
     return userid, completed
